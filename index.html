@@ -292,7 +292,7 @@ html[data-theme="dark"] .ansbox .alabel{color:var(--green)}
   <div class="seg" id="seg"><div class="seg-thumb" id="segThumb"></div></div>
 </div></div>
 <div class="wrap">
-  <p class="hint">选择题点选项即判分，多选先选再提交；其余题型点「显示答案」背诵，用「已掌握 / 再看看」标记。进度自动保存在本机。</p>
+  <p class="hint">选择题点选项即判分：答对自动跳下一题，答错留在本页订正；多选先选再提交。其余题型点「显示答案」背诵。进度自动保存在本机。</p>
   <div id="view"></div>
   <div class="footer">
     题库来源：01 选择题.pdf、05 匹配与程序分析.doc、机器学习基础-简答题.docx、06 机器学习-综合题.pdf<br>
@@ -368,6 +368,15 @@ document.getElementById('themeBtn').onclick = ()=>{
 
 /* ================ 选择题 ================ */
 const C = {sec:'全部', mode:'all', order:'seq', pool:[], idx:0, sel:new Set()};
+let _autoJumpTimer = null;
+function clearAutoJump(){ if(_autoJumpTimer){ clearTimeout(_autoJumpTimer); _autoJumpTimer = null; } }
+function goTo(i){ clearAutoJump(); C.idx = i; C.sel = new Set(); renderChoice(); }
+function autoNextIfCorrect(ok){
+  clearAutoJump();
+  if(ok && C.pool.length){
+    _autoJumpTimer = setTimeout(()=>{ _autoJumpTimer = null; goTo((C.idx+1)%C.pool.length); }, 750);
+  }
+}
 const CHOICE = DATA.choice.map((q,i)=>({...q, id:i+1}));
 const SECS = ['全部', ...new Set(CHOICE.map(q=>q.sec))];
 function buildPool(){
@@ -386,6 +395,7 @@ function poolStats(){
   return {done, ok, total:C.pool.length};
 }
 function renderChoice(){
+  clearAutoJump();
   const st = poolStats();
   const pct = st.total? Math.round(st.done/st.total*100) : 0;
   const acc = st.done&&st.ok? Math.round(st.ok/st.done*100) : 0;
@@ -435,7 +445,7 @@ function toggleGrid(){
     const cls = r? (r.ok===1?'ok':(r.ok===0?'no':'viewed')) : '';
     return `<button class="gnum ${cls} ${i===C.idx?'cur':''}" data-i="${i}">${i+1}</button>`;
   }).join('') + '</div>';
-  g.onclick = e=>{ const b=e.target.closest('[data-i]'); if(!b) return; C.idx=+b.dataset.i; C.sel=new Set(); renderChoice(); };
+  g.onclick = e=>{ const b=e.target.closest('[data-i]'); if(!b) return; goTo(+b.dataset.i); };
 }
 function renderQCard(){
   const qcard = document.getElementById('qcard');
@@ -494,8 +504,8 @@ function renderQCard(){
     <span class="kbdhint">按 <kbd>←</kbd> <kbd>→</kbd> 翻题，<kbd>1</kbd>-<kbd>5</kbd> 选选项${q.multi?'，<kbd>Enter</kbd> 提交':''}</span>
     <button class="btn" id="nextBtn">下一题${IC.chevR}</button>
   </div>`;
-  document.getElementById('prevBtn').onclick = ()=>{ C.idx=(C.idx-1+C.pool.length)%C.pool.length; C.sel=new Set(); renderChoice(); };
-  document.getElementById('nextBtn').onclick = ()=>{ C.idx=(C.idx+1)%C.pool.length; C.sel=new Set(); renderChoice(); };
+  document.getElementById('prevBtn').onclick = ()=> goTo((C.idx-1+C.pool.length)%C.pool.length);
+  document.getElementById('nextBtn').onclick = ()=> goTo((C.idx+1)%C.pool.length);
   const optsEl = document.getElementById('opts');
   if(optsEl) optsEl.addEventListener('click', e=>{
     const o=e.target.closest('[data-k]'); if(!o) return;
@@ -516,15 +526,19 @@ function pick(q, k){
     if(C.sel.has(k)) C.sel.delete(k); else C.sel.add(k);
     renderQCard();
   } else {
-    state.c[q.id] = {s:k, ok: k===q.ans?1:0};
+    const ok = k===q.ans;
+    state.c[q.id] = {s:k, ok: ok?1:0};
     save(); renderQCard(); refreshGrid(); refreshStats();
+    autoNextIfCorrect(ok);
   }
 }
 function submitMulti(q){
   if(!C.sel.size) return;
   const sel = [...C.sel].sort().join('');
-  state.c[q.id] = {s:sel, ok: sel===q.ans?1:0};
+  const ok = sel===q.ans;
+  state.c[q.id] = {s:sel, ok: ok?1:0};
   save(); renderQCard(); refreshGrid(); refreshStats();
+  autoNextIfCorrect(ok);
 }
 function reveal(q){
   const r = recOf(q);
