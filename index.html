@@ -61,10 +61,9 @@ svg.ic.lg{width:18px;height:18px}
   box-shadow:inset 0 1px 0 rgba(255,255,255,.14)}
 html[data-theme="dark"] .topbar{box-shadow:none}
 .topbar-inner{max-width:1280px;margin:0 auto;padding:8px 18px;display:flex;align-items:center;gap:12px}
-.brandmark{width:32px;height:32px;border-radius:9px;color:#fff;display:grid;place-items:center;
-  font-size:15px;font-weight:600;flex:none;
-  background:linear-gradient(180deg,#42a5ff,#0a6cff);
-  box-shadow:0 1px 2px rgba(0,50,120,.35), inset 0 1px 0 rgba(255,255,255,.35)}
+.brandmark{width:32px;height:32px;border-radius:9px;flex:none;display:grid;place-items:center;
+  background:#ff0029;box-shadow:0 1px 2px rgba(150,0,25,.35), inset 0 1px 0 rgba(255,255,255,.28)}
+.brandmark svg{width:22px;height:22px;display:block}
 .brand-name{margin:0;font-size:15.5px;font-weight:600;letter-spacing:-.01em;white-space:nowrap}
 @media (max-width:900px){
   .topbar-inner{flex-wrap:wrap;row-gap:10px;padding:10px 14px}
@@ -282,7 +281,7 @@ html[data-theme="dark"] .ansbox .alabel{color:var(--green)}
 </head>
 <body>
 <div class="topbar"><div class="topbar-inner">
-  <div class="brandmark">题</div>
+  <div class="brandmark"><svg viewBox="0 0 24 24" fill="#ffffff" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Republic of Gamers"><path d="M21.3906 5.5833c-1.3467.0115-3.4338.19541-5.9375.97657-1.6024.49851-3.916 2.74203-8.22459 6.90823-.56973.3204-2.67017-.8912-3.88085-1.461 0 0 1.9929 3.1699 2.70507 4.0957 1.06825 1.46 3.02735 2.3145 3.02735 2.3145-.17804-.1781-1.53019-1.6029-1.92188-2.4219-.24926-.3917.03418-.9624 1.95703-2.3867C10.86 12.3268 17.0569 7.09358 23.0391 5.66924c0 0-.601-.09488-1.6485-.08593V5.5833ZM24 7.7708c-2.0653.21366-4.06.81878-5.9473 1.70899C14.2783 11.2602 7.9043 15.8177 7.9043 15.8177c.28486.178.5706.3556.85546.498 3.06234 1.3531 7.58484 2.1716 8.43944 1.8867 2.3858-.7833 5.056-5.8026 5.875-8.1172 0 0-2.4933.9968-5.0215 2.1719-2.1009.9971-4.414 2.1368-4.414 2.1368l5.875-1.7813s-1.5676 3.7036-3.6328 4.1309c-2.0653.4273-5.6973-1.0332-5.6973-1.0332.2849-.2493 4.1302-3.0629 13.1035-6.73051.3917-.28487.6417-.74608.7129-1.20898V7.7708ZM0 11.2942c.35608.9615.8194 1.8525 1.35352 2.7071.64094.819 3.27477 1.4952 3.63086 1.5664C3.34638 14.4282 0 11.2942 0 11.2942Z"/></svg></div>
   <h1 class="brand-name">L1berty独家机器学习期末秘方</h1>
   <div class="seg" id="seg"><div class="seg-thumb" id="segThumb"></div></div>
   <button class="iconbtn" id="themeBtn"><span id="themeIco"></span><span id="themeTxt"></span></button>
